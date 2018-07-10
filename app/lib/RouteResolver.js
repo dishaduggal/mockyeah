@@ -43,7 +43,8 @@ function isEqualWithCustomizer(value, other) {
 }
 
 function isRouteForRequest(route, req) {
-  if (!isEqualMethod(req.method, route.method)) return false;
+  if (!isEqualMethod(req.method, route.method))
+    return { result: false, reason: 'method not match' };
 
   const pathname = normalizePathname(parse(req.url, true).pathname);
 
@@ -51,26 +52,30 @@ function isRouteForRequest(route, req) {
 
   if (routePathnameIsAbsoluteUrl) {
     // eslint-disable-next-line no-lonely-if
-    if (!route.pathRegExp.test(pathname)) return false;
+    if (!route.pathRegExp.test(pathname))
+      return { result: false, reason: 'path not match absolute url' };
   } else {
     // eslint-disable-next-line no-lonely-if
-    if (route.pathname !== '*' && !route.pathRegExp.test(pathname)) return false;
+    if (route.pathname !== '*' && !route.pathRegExp.test(pathname))
+      return { result: false, reason: 'relative path not match' };
   }
 
   const matchesParams = _.every(route.query, (value, key) =>
     isEqualWithCustomizer(_.get(req.query, key), value)
   );
 
-  if (!matchesParams) return false;
+  if (!matchesParams) return { result: false, reason: 'params not match' };
 
   // TODO: See what `req.body` looks like with different request content types.
-  if (route.body && !isMatchWithCustomizer(req.body, route.body)) return false;
+  if (route.body && !isMatchWithCustomizer(req.body, route.body))
+    return { result: false, reason: 'body not match' };
 
-  if (route.headers && !isMatchWithCustomizer(req.headers, route.headers)) return false;
+  if (route.headers && !isMatchWithCustomizer(req.headers, route.headers))
+    return { result: false, reason: 'headers not match' };
 
   // TODO: Later add features to match other things, like cookies, or with other types, etc.
 
-  return true;
+  return { result: true };
 }
 
 /**
@@ -88,7 +93,7 @@ function isRouteMatch(route1, route2) {
 
 function listen() {
   this.app.all('*', (req, res, next) => {
-    const route = this.routes.find(r => isRouteForRequest(r, req));
+    const route = this.routes.find(r => isRouteForRequest(r, req).result);
 
     if (!route) {
       next();
