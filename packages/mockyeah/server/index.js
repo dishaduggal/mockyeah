@@ -5,6 +5,7 @@ const https = require('https');
 const fs = require('fs');
 const createCertFiles = require('create-cert-files');
 const { partial } = require('lodash');
+const debug = require('debug');
 const App = require('../app');
 const prepareConfig = require('../lib/prepareConfig');
 const AdminServer = require('./admin');
@@ -26,7 +27,7 @@ module.exports = function Server(config, onStart) {
   function listen(secure, err) {
     if (err) throw err;
     this.rootUrl = `http${secure ? 's' : ''}://${this.address().address}:${this.address().port}`;
-    app.log('serve', `Listening at ${this.rootUrl}`);
+    debug('mockyeah:serve')(`Listening at ${this.rootUrl}`);
     // Execute callback once server starts
     if (onStart) onStart.call(this);
   }
@@ -65,7 +66,7 @@ module.exports = function Server(config, onStart) {
   // Expose ability to stop server via API
   const close = function close(cb) {
     server.close(function callback() {
-      app.log(['serve', 'exit'], 'Goodbye.');
+      debug('mockyeah:serve:exit')('Goodbye.');
       if (cb) cb();
     });
   };
@@ -81,7 +82,7 @@ module.exports = function Server(config, onStart) {
     const admin = new AdminServer(config, app);
     adminServer = admin.listen(config.adminPort, config.adminHost, function adminListen() {
       adminServer.rootUrl = `http://${this.address().address}:${this.address().port}`;
-      app.log(['serve', 'admin'], `Admin server listening at ${adminServer.rootUrl}`);
+      debug('mockyeah:serve:admin')(`Admin server listening at ${adminServer.rootUrl}`);
     });
   }
 

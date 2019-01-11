@@ -1,10 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug');
 
 module.exports = app => () => {
   const { capturesDir } = app.config;
 
-  app.log(['serve', 'play all']);
+  debug('mockyeah:serve')('play all');
 
   fs.readdir(capturesDir, (err, files) => {
     if (err) throw err;

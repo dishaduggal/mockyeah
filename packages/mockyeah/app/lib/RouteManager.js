@@ -1,5 +1,6 @@
 'use strict';
 
+const debug = require('debug');
 const RouteResolver = require('./RouteResolver');
 
 /**
@@ -11,7 +12,7 @@ module.exports = function RouteManager(app) {
 
   return {
     register: function register(method, _path, response) {
-      app.log(['serve', 'mount', method], _path.path || _path.url || _path);
+      debug(`mockyeah:serve:mount:${method}`)(_path.path || _path.url || _path);
       return routeResolver.register(method, _path, response);
     },
 

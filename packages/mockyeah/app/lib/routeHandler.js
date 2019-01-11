@@ -2,6 +2,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const debug = require('debug');
 const expandPath = require('../../lib/expandPath');
 
 /**
@@ -103,7 +104,7 @@ function validateResponse(response) {
 
 function verifyFile(filePath, message) {
   fs.lstat(filePath, err => {
-    if (err) this.app.log(['handler', 'error'], message);
+    if (err) debug('mockyeah:handler:error')(message);
   });
 }
 
@@ -117,8 +118,7 @@ module.exports = function handler(route) {
     let send;
 
     if (this.app.config.journal) {
-      this.app.log(
-        ['request', 'journal'],
+      debug('mockyeah:request:journal')(
         JSON.stringify(
           {
             callCount: req.callCount,
@@ -191,7 +191,7 @@ module.exports = function handler(route) {
     setTimeout(() => {
       const duration = new Date().getTime() - start;
       send();
-      this.app.log(['request', req.method], `${req.url} (${duration}ms)`);
+      debug(`mockyeah:request:${req.method}`)(`${req.url} (${duration}ms)`);
     }, response.latency);
   };
 };

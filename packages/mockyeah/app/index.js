@@ -3,7 +3,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const async = require('async');
-const Logger = require('./lib/Logger');
 const RouteManager = require('./lib/RouteManager');
 const proxyRoute = require('./proxyRoute');
 const recorder = require('./recorder');
@@ -30,19 +29,6 @@ module.exports = function App(config) {
 
   // Prepare configuration. Merge configuration with global and default configuration
   app.config = Object.assign({}, globalConfig, config || {});
-
-  // Instantiate new logger
-  const logger = new Logger({
-    name: app.config.name,
-    output: app.config.output,
-    verbose: app.config.verbose
-  });
-
-  // Attach log to app instance to bind output to app instance
-  app.log = logger.log.bind(logger);
-
-  // Provide user feedback when verbose output is enabled
-  app.log('info', 'verbose output enabled', true);
 
   app.use(bodyParser.json());
 

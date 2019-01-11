@@ -1,16 +1,18 @@
+const debug = require('debug');
+
 module.exports = app => (name, options = {}) => {
   let only;
 
   app.locals.recording = true;
 
   if (!name) throw new Error('Must provide a recording name.');
-  app.log(['serve', 'record'], name);
+  debug('mockyeah:serve:record')(name);
 
   if (options.only && typeof options.only === 'string') {
     // if only is truthy, assume it is a regex pattern
     const regex = new RegExp(options.only);
     only = regex.test.bind(regex);
-    app.log(['serve', 'record', 'only'], regex);
+    debug('mockyeah:record:only')(regex);
   }
 
   const enhancedOptions = Object.assign({}, options, {

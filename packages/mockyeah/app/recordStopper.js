@@ -1,6 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 const mkdirp = require('mkdirp');
+const debug = require('debug');
 const relativeRoot = require('../lib/relativeRoot');
 const {
   resolveFilePath,
@@ -34,7 +35,7 @@ module.exports = app => cb => {
   const newSet = set.map((capture, index) => {
     const [match, responseOptions] = capture;
 
-    app.log(['serve', 'capture'], match.url || match.path || match);
+    debug('mockyeah:serve:capture')(match.url || match.path || match);
 
     if (recordToFixtures) {
       const { newResponseOptions, body } = getDataForRecordToFixtures({
@@ -91,7 +92,7 @@ module.exports = app => cb => {
 
   fs.writeFile(filePath, jsModule, err => {
     if (err) {
-      app.log(['record', 'response', 'error'], err);
+      debug('mockyeah:response:error')(err);
 
       cb(err);
 
@@ -99,7 +100,7 @@ module.exports = app => cb => {
     }
 
     set.forEach(capture => {
-      app.log(['record', 'response', 'saved'], capture[0].path || capture[0].url || capture[0]);
+      debug('mockyeah:response:saved')(capture[0].path || capture[0].url || capture[0]);
     });
 
     if (typeof app.locals.proxyingBeforeRecording !== 'undefined') {

@@ -1,6 +1,7 @@
 const request = require('request');
 const isAbsoluteUrl = require('is-absolute-url');
 const { isEmpty } = require('lodash');
+const debug = require('debug');
 const { decodeProtocolAndPort, handleContentType } = require('./lib/helpers');
 
 const now = () => new Date().getTime();
@@ -61,11 +62,11 @@ const proxyRoute = (req, res, next) => {
 
   const startTime = now();
 
-  app.log(['proxy', req.method], reqUrl);
+  debug(`mockyeah:proxy${req.method}`, reqUrl);
 
   request(makeRequestOptions(req), (err, _res, _body) => {
     if (err) {
-      if (err) app.log(['proxy', 'error'], err.message);
+      if (err) debug('mockyeah:proxy:error')(err.message);
       return;
     }
 

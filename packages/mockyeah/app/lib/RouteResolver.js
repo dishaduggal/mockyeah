@@ -4,6 +4,7 @@ const { parse } = require('url');
 const _ = require('lodash');
 const pathToRegExp = require('path-to-regexp');
 const isAbsoluteUrl = require('is-absolute-url');
+const debug = require('debug');
 const Expectation = require('./Expectation');
 const routeHandler = require('./routeHandler');
 const { decodeProtocolAndPort, encodeProtocolAndPort } = require('./helpers');
@@ -102,7 +103,7 @@ function listen() {
 
     const expectationNext = err => {
       if (err) {
-        this.app.log(['record', 'expectation', 'error'], err);
+        debug('mockyeah:expectation:error')(err);
         res.sendStatus(500);
         return;
       }
